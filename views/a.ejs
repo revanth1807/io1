@@ -9,31 +9,42 @@
   </style>
 </head>
 <body>
+    <input type="text" id="name" />
+    <button onclick="register()">send</button>
   <ul id="messages"></ul>
   <form id="form">
-    <input id="input" autocomplete="off" /><button>Send</button>
+    <input id="input1" autocomplete="off" />
+    <input id="input" autocomplete="off" />
+    <button type="submit">Send</button>
   </form>
 
-  
+
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
 
     const form = document.getElementById('form');
     const input = document.getElementById('input');
+    const input1 = document.getElementById('input1');
     const messages = document.getElementById('messages');
-
+    const name=document.getElementById('name');
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      if (input.value) {
-        socket.emit('chat message', input.value);
+      if (input.value && input1.value) {
+        // console.log(input1.value)
+        socket.emit('chat message',name.value,input1.value, input.value);
         input.value = '';
+        input1.value='';
       }
     });
-
-    socket.on('chat message', (msg) => {
+    function register(){
+        const name=document.getElementById('name').value;
+        socket.emit('register',name);
+        // document.getElementById('name').value=''
+    }
+    socket.on('chat message', (name,msg) => {
       const item = document.createElement('li');
-      item.textContent = msg;
+      item.textContent = `from : ${name} -> ${msg}`
       messages.appendChild(item);
     });
   </script>
